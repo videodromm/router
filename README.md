@@ -5,22 +5,26 @@ Server responsible for message routing.
 routes messages OSC MIDI websockets to the clients (Python)
 
 Websockets server for OSC, MIDI, etc. made with crossbar (Python)
-* Listen for Web Socket connections on port 8080
+* Listen for Web Socket connections on port 8765
 * Relay incoming messages from a Web Socket client to all other connected clients
 
 ## Installation
 
 - Setup Python 3.5 64 bit
-- Follow instructions on http://crossbar.io/docs/Local-Installation/ 
-- Check with <code>crossbar version</code>
-- Optional: Test with <code>crossbar init --template hello:python --appdir $HOME/hello</code>
-- Optional: Run <code>crossbar start --cbdir /home/YOURNAME/hello/.crossbar</code>
-- Optional: Open http://localhost:8080/ in your browser
+- pip install argparse 
+- pip install websockets
+- pip install asyncio
+- pip install python-osc
+
 
 ## Linux
 - sudo apt-get install python3-pip
-git clone https://github.com/crossbario/autobahn-python
+- pip3 install argparse
+- pip3 install websockets
+- pip3 install asyncio
+- pip3 install python-osc
+
 
 ## Running the router
-- 
+- python or python3 videodromm_router.py
 
