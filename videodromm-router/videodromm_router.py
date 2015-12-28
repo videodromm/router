@@ -22,7 +22,7 @@ args = parser.parse_args()
 
 print("Listening on ip:{} port:{}".format(args.ip, args.port))
 """
-websockets server
+websockets server from https://github.com/aaugustin/websockets
 """
 async def hello(websocket, path):
     name = await websocket.recv()
