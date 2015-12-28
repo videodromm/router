@@ -3,6 +3,15 @@
 import asyncio
 import websockets
 import argparse
+import logging
+
+logger = logging.getLogger('websockets')
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler())
+
+"""
+parse command line arguments
+"""
 print("Pass arguments --ip yourIpAddress --port yourPort")
 parser = argparse.ArgumentParser()
 parser.add_argument("--ip",
@@ -11,7 +20,7 @@ parser.add_argument("--port",
       type=int, default=8765, help="The port to listen on")
 args = parser.parse_args()
 
-print(args.ip, args.port)
+print("Listening on ip:{} port:{}".format(args.ip, args.port))
 """
 websockets server
 """

@@ -26,5 +26,5 @@ Websockets server for OSC, MIDI, etc. made with crossbar (Python)
 
 
 ## Running the router
-- python or python3 videodromm_router.py
+- python or python3 videodromm_router.py --ip yourIp --port yourPort
 
