@@ -24,15 +24,15 @@ print("Listening on ip:{} port:{}".format(args.ip, args.port))
 """
 websockets server from https://github.com/aaugustin/websockets
 """
-async def hello(websocket, path):
-    name = await websocket.recv()
-    print("< {}".format(name))
+async def process_message(websocket, path):
+    received = await websocket.recv()
+    print("received: {}".format(received))
 
-    greeting = "Hello {}!".format(name)
-    await websocket.send(greeting)
-    print("> {}".format(greeting))
+    message_to_route = "{}".format(received)
+    await websocket.send(message_to_route)
+    print("routed: {}".format(message_to_route))
 
-start_server = websockets.serve(hello, args.ip, args.port)
+start_server = websockets.serve(process_message, args.ip, args.port)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
