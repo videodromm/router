@@ -23,7 +23,12 @@ Websockets server for OSC, MIDI, etc. made with crossbar (Python)
 - pip3 install websockets
 - pip3 install asyncio
 - pip3 install python-osc
+- pip3 install zope.interface
 
+# twisted
+- svn checkout svn://svn.twistedmatrix.com/svn/Twisted/tags/releases/twisted-13.1.0
+- cd twisted-13.1.0
+- python3 setup3.py install
 
 ## Running the router
 - python or python3 videodromm_router.py --ip yourIp --port yourPort
