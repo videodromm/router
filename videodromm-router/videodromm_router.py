@@ -1,91 +1,4 @@
 
-"""
-client
-#!/usr/bin/env python
-
-import asyncio
-import websockets
-
-async def hello():
-    async with websockets.connect('ws://192.168.0.17:8765') as websocket:
-
-        name = input("What's your name? ")
-        await websocket.send(name)
-        print("> {}".format(name))
-
-        greeting = await websocket.recv()
-        print("< {}".format(greeting))
-
-asyncio.get_event_loop().run_until_complete(hello())
-"""
-
-
-"""
-https://pypi.python.org/pypi/python-osc
-client
-This program sends 10 random values between 0.0 and 1.0 to the /filter address,
-waiting for 1 seconds between each value.
-
-import argparse
-import random
-import time
-
-from pythonosc import osc_message_builder
-from pythonosc import udp_client
-
-
-if __name__ == "__main__":
-  parser = argparse.ArgumentParser()
-  parser.add_argument("--ip", default="127.0.0.1",
-      help="The ip of the OSC server")
-  parser.add_argument("--port", type=int, default=8000,
-      help="The port the OSC server is listening on")
-  args = parser.parse_args()
-
-  client = udp_client.UDPClient(args.ip, args.port)
-
-  for x in range(10):
-    msg = osc_message_builder.OscMessageBuilder(address = "/filter")
-    msg.add_arg(random.random())
-    msg = msg.build()
-    client.send(msg)
-    time.sleep(1)"""
-"""
-server
-
-    import argparse
-import math
-
-from pythonosc import dispatcher
-from pythonosc import osc_server
-
-def print_volume_handler(unused_addr, args, volume):
-  print("[{0}] ~ {1}".format(args[0], volume))
-
-def print_compute_handler(unused_addr, args, volume):
-  try:
-    print("[{0}] ~ {1}".format(args[0], args[1](volume)))
-  except ValueError: pass
-
-if __name__ == "__main__":
-  parser = argparse.ArgumentParser()
-  parser.add_argument("--ip",
-      default="127.0.0.1", help="The ip to listen on")
-  parser.add_argument("--port",
-      type=int, default=5005, help="The port to listen on")
-  args = parser.parse_args()
-
-  dispatcher = dispatcher.Dispatcher()
-  dispatcher.map("/debug", print)
-  dispatcher.map("/volume", print_volume_handler, "Volume")
-  dispatcher.map("/logvolume", print_compute_handler, "Log volume", math.log)
-
-  server = osc_server.ThreadingOSCUDPServer(
-      (args.ip, args.port), dispatcher)
-  print("Serving on {}".format(server.server_address))
-  server.serve_forever()
-"""
-
 #!/usr/bin/env python
 
 #
@@ -121,13 +34,13 @@ parser = argparse.ArgumentParser(description='Most Pixels Ever Server, conforms 
 parser.add_argument('--screens', dest='screens', default=-1, help='The number of clients. The server won\'t start the draw loop until all of the clients are connected.')
 parser.add_argument('--port', dest='port_num', default=9002, help='The port number that the clients connect to.')
 parser.add_argument('--framerate', dest='framerate', default=60, help='The target framerate.')
-"""
 parser.add_argument("--ip", default="127.0.0.1", help="The websocket ip to listen on")
-parser.add_argument("--wsport", type=int, default=8765, help="The websocket port to listen on")
-"""
+parser.add_argument("--wsport", type=int, default=8765, help="The websocket server to connect to")
+
 args = parser.parse_args()
 # print("Listening websocket clients on ip:{} port:{}".format(args.ip, args.port))
-
+ip = args.ip
+wsport = int(args.wsport)
 portnum = int(args.port_num)
 screens_required = int(args.screens)
 framerate = int(args.framerate)
@@ -137,22 +50,6 @@ screens_drawn = 0
 is_paused = False
 last_frame_time = datetime.now()
 
-# websockets server from https://github.com/aaugustin/websockets
-"""
-async def process_message(websocket, path):
-    received = await websocket.recv()
-    print("received: {}".format(received))
-
-    message_to_route = "{}".format(received)
-    await websocket.send(message_to_route)
-    print("routed: {}".format(message_to_route))
-
-start_server = websockets.serve(process_message, args.ip, args.wsport)
-
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
-"""
-# end websockets server
 class BroadcastMessage:
 
     def __init__(self, body, from_client_id, to_client_ids = []):
@@ -380,4 +277,116 @@ print("MPE Server started on port %i" % portnum)
 print("Running at max %i FPS" % framerate)
 if screens_required > 0:
     print("Waiting for %i clients." % screens_required)
+
+
+
+async def cnx():
+    async with websockets.connect('ws://localhost:8765') as websocket:
+        name = input("What's your name? ")
+        await websocket.send(name)
+        print("> {}".format(name))
+        listener_task = asyncio.ensure_future(websocket.recv())
+        done, pending = await asyncio.wait(
+            [listener_task],
+            return_when=asyncio.FIRST_COMPLETED)
+
+        if listener_task in done:
+            message = listener_task.result()
+            print(message)          
+        else:
+            listener_task.cancel()
+try:
+    asyncio.get_event_loop().run_until_complete(cnx())
+except OSError:
+    print("videodromm websocket server not running")
+    pass
+
 reactor.run()
+
+
+"""
+client
+#!/usr/bin/env python
+
+import asyncio
+import websockets
+
+async def hello():
+    async with websockets.connect('ws://192.168.0.17:8765') as websocket:
+
+        name = input("What's your name? ")
+        await websocket.send(name)
+        print("> {}".format(name))
+
+        greeting = await websocket.recv()
+        print("< {}".format(greeting))
+
+asyncio.get_event_loop().run_until_complete(hello())
+"""
+
+
+"""
+https://pypi.python.org/pypi/python-osc
+client
+This program sends 10 random values between 0.0 and 1.0 to the /filter address,
+waiting for 1 seconds between each value.
+
+import argparse
+import random
+import time
+
+from pythonosc import osc_message_builder
+from pythonosc import udp_client
+
+
+if __name__ == "__main__":
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--ip", default="127.0.0.1",
+      help="The ip of the OSC server")
+  parser.add_argument("--port", type=int, default=8000,
+      help="The port the OSC server is listening on")
+  args = parser.parse_args()
+
+  client = udp_client.UDPClient(args.ip, args.port)
+
+  for x in range(10):
+    msg = osc_message_builder.OscMessageBuilder(address = "/filter")
+    msg.add_arg(random.random())
+    msg = msg.build()
+    client.send(msg)
+    time.sleep(1)"""
+"""
+server
+
+    import argparse
+import math
+
+from pythonosc import dispatcher
+from pythonosc import osc_server
+
+def print_volume_handler(unused_addr, args, volume):
+  print("[{0}] ~ {1}".format(args[0], volume))
+
+def print_compute_handler(unused_addr, args, volume):
+  try:
+    print("[{0}] ~ {1}".format(args[0], args[1](volume)))
+  except ValueError: pass
+
+if __name__ == "__main__":
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--ip",
+      default="127.0.0.1", help="The ip to listen on")
+  parser.add_argument("--port",
+      type=int, default=5005, help="The port to listen on")
+  args = parser.parse_args()
+
+  dispatcher = dispatcher.Dispatcher()
+  dispatcher.map("/debug", print)
+  dispatcher.map("/volume", print_volume_handler, "Volume")
+  dispatcher.map("/logvolume", print_compute_handler, "Log volume", math.log)
+
+  server = osc_server.ThreadingOSCUDPServer(
+      (args.ip, args.port), dispatcher)
+  print("Serving on {}".format(server.server_address))
+  server.serve_forever()
+"""
