@@ -278,10 +278,8 @@ print("Running at max %i FPS" % framerate)
 if screens_required > 0:
     print("Waiting for %i clients." % screens_required)
 
-
-
 async def cnx():
-    async with websockets.connect('ws://localhost:8765') as websocket:
+    async with websockets.connect('ws://' + ip + ':' + str(wsport)) as websocket:
         name = input("What's your name? ")
         await websocket.send(name)
         print("> {}".format(name))
@@ -292,7 +290,7 @@ async def cnx():
 
         if listener_task in done:
             message = listener_task.result()
-            print(message)          
+            print("Received from server: {}".format(message))          
         else:
             listener_task.cancel()
 try:
