@@ -38,7 +38,7 @@ parser.add_argument("--ip", default="127.0.0.1", help="The websocket ip to liste
 parser.add_argument("--wsport", type=int, default=8765, help="The websocket server to connect to")
 
 args = parser.parse_args()
-# print("Listening websocket clients on ip:{} port:{}".format(args.ip, args.port))
+
 ip = args.ip
 wsport = int(args.wsport)
 portnum = int(args.port_num)
@@ -92,7 +92,7 @@ class MPEServer(Protocol):
             tokens = message.split("|")
             token_count = len(tokens)
             cmd = tokens[0]
-            print("CMD %s. " % cmd, data, tokens)
+            # print("CMD %s. " % cmd, data, tokens)
             if cmd == CMD_DID_DRAW:
                 # Format
                 # D|client_id|last_frame_rendered
@@ -278,21 +278,18 @@ print("Running at max %i FPS" % framerate)
 if screens_required > 0:
     print("Waiting for %i clients." % screens_required)
 
-async def cnx():
-    async with websockets.connect('ws://' + ip + ':' + str(wsport)) as websocket:
-        name = input("What's your name? ")
-        await websocket.send(name)
-        print("> {}".format(name))
-        listener_task = asyncio.ensure_future(websocket.recv())
-        done, pending = await asyncio.wait(
-            [listener_task],
-            return_when=asyncio.FIRST_COMPLETED)
+@asyncio.coroutine
+def cnx():
+    connection = yield from websockets.connect('ws://' + ip + ':' + str(wsport))
+    name = input("What's your name? ")
+    yield from connection.send(name)
+    print("> {}".format(name))
+    for _ in range(23):
+        msg = yield from connection.recv()
+        print("< {}".format(msg))
 
-        if listener_task in done:
-            message = listener_task.result()
-            print("Received from server: {}".format(message))          
-        else:
-            listener_task.cancel()
+    yield from connection.close()
+
 try:
     asyncio.get_event_loop().run_until_complete(cnx())
 except OSError:
