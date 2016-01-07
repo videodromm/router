@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>113b00ad-5891-4e9d-89f7-da29efb381c8</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>videodromm_router.py</StartupFile>
+    <StartupFile>videodromm_websocket_server.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

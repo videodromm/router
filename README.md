@@ -4,11 +4,14 @@ Server responsible for message routing.
 [![Join the chat at https://gitter.im/videodromm/router](https://badges.gitter.im/videodromm/router.svg)](https://gitter.im/videodromm/router?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 routes messages OSC MIDI websockets to the clients (Python)
 
-Websockets server for OSC, MIDI, etc. made with crossbar (Python)
+Websockets server for OSC, MIDI, etc.
 * Listen for Web Socket connections on port 8765
 * Relay incoming messages from a Web Socket client to all other connected clients
 
 Most-Pixels-Ever router for multiple clients communication
+
+![Windows](https://raw.github.com/videodromm/router/master/assets/vd-python-win.jpg)
+![Linux](https://raw.github.com/videodromm/router/master/assets/vd-python-lnx.jpg)
 
 ## Installation
 
