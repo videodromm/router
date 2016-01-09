@@ -37,6 +37,6 @@ Most-Pixels-Ever router for multiple clients communication
 
 ## Running the router
 Determine the ip address of the videodrömm websocket server
-1 first launch the websocket server: python3 videodromm_websocket_server.py
-2 then launch the router: python3 videodromm_router.py --ip websocketserverip --port websocketserverport
+- first launch the websocket server: python3 videodromm_websocket_server.py
+- then launch the router: python3 videodromm_router.py --ip websocketserverip --port websocketserverport
 
